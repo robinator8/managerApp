@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
+import { Text } from 'react-native';
 import { connect } from 'react-redux';
-import { Card, CardSection, Input, Button } from './common';
+import { Card, CardSection, Input, Button, Spinner } from './common';
 import {
   emailChanged,
   passwordChanged,
-  resetEmail,
-  resetPassword,
   loginUser,
 } from '../actions';
 
@@ -24,17 +23,24 @@ class LoginForm extends Component {
     this.props.loginUser({ email, password });
   }
 
-  resetEmailAndPassword() {
-    //this.props.resetEmail('');
-    this.props.resetPassword('');
+  renderButton() {
+    if (this.props.loading) {
+      return <Spinner size="large" />;
+    }
+    return (
+      <Button
+        text="Login"
+        onPress={this.onButtonPress.bind(this)}
+      />
+    );
   }
 
   render() {
     const {
       email,
       password,
-      resettingEmail,
-      resettingPassword
+      setEmail,
+      setPassword
     } = this.props;
     return (
       <Card>
@@ -43,7 +49,7 @@ class LoginForm extends Component {
             label="Email"
             placeholder="example@gmail.com"
             onChangeText={this.onEmailChange.bind(this)}
-            value={(() => (resettingEmail ? email : undefined))()}
+            value={(() => (setEmail ? email : undefined))()}
           />
         </CardSection>
         <CardSection>
@@ -52,34 +58,40 @@ class LoginForm extends Component {
             label="Password"
             placeholder="password"
             onChangeText={this.onPasswordChange.bind(this)}
-            value={(() => (resettingPassword ? password : undefined))()}
+            value={(() => (setPassword ? password : undefined))()}
           />
         </CardSection>
+        <Text style={styles.errorTextStyle}>
+          {this.props.error}
+        </Text>
         <CardSection>
-          <Button
-            text="Login"
-            onPress={this.onButtonPress.bind(this)}
-          />
+          {this.renderButton()}
         </CardSection>
       </Card>
     );
   }
 }
 
-const mapStateToProps = state => {
+const styles = {
+  errorTextStyle: {
+    fontSize: 20,
+    alignSelf: 'center',
+    color: 'red'
+  }
+};
+
+const mapStateToProps = ({ auth }) => {
   const {
-    email, password, resettingEmail, resettingPassword
-  } = state.auth;
+    email, password, setEmail, setPassword, error, loading
+  } = auth;
 
   return {
-    email, password, resettingEmail, resettingPassword
+    email, password, setEmail, setPassword, error, loading
   };
 };
 
 export default connect(mapStateToProps, {
   emailChanged,
   passwordChanged,
-  resetEmail,
-  resetPassword,
   loginUser
 })(LoginForm);
