@@ -20,6 +20,7 @@ class App extends Component {
   }
 
   render() {
+    console.ignoredYellowBox = ['Setting a timer']; // Removes timer warning
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
     return (
       <Provider store={store}>
