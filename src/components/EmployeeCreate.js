@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { employeeUpdate, employeeCreate } from '../actions';
+import { employeeCreate, employeeFormReset } from '../actions';
 import { Button, Card, CardSection } from './common';
 import EmployeeForm from './EmployeeForm';
 
 class EmployeeCreate extends Component {
+  componentWillMount() {
+    this.props.employeeFormReset();
+  }
+
   onButtonPress() {
     const { name, phone, shift } = this.props;
     this.props.employeeCreate({ name, phone, shift: shift || 'Monday' });
@@ -28,5 +32,5 @@ const mapStateToProps = ({ employeeForm }) => {
 };
 
 export default connect(mapStateToProps, {
-  employeeUpdate, employeeCreate
+  employeeCreate, employeeFormReset
 })(EmployeeCreate);
